@@ -201,12 +201,10 @@ namespace HarcsosokAppBne
            int harcos_id = ((Harcosok)comboBox_user.SelectedItem).Id;
         
 
-            sql.CommandText = "INSERT INTO `kepessegek`(`nev`, `leiras`,`harcos_id`)" +
+            sql.CommandText = "INSERT INTO `kepessegek`(`id`, `nev`, `leiras`,`harcos_id`)" +
               " VALUES" +
-              " ( " + textBox_kepesseg_nev_add.Text.Trim() + " '," +
-           // " ( NULL, " + " '" + textBox_kepesseg_nev_add.Text.Trim() + " '," +
-               " '" + textBox_kepesseg_leiras_add.Text.Trim() + "' " +
-             " " + ((Harcosok)comboBox_user.SelectedItem).Id + ");";
+              " (NULL, " + nev + "," +leiras + " ," + " , " + harcos_id + "); ";
+           // sql.ExecuteNonQuery();
 
             try
                 {
@@ -222,7 +220,7 @@ namespace HarcsosokAppBne
                     return;
                 }
 
-            listBox_kepesseg.Items.Add(new Kepessegek(id, nev, leiras, harcos_id));
+          //  listBox_kepesseg.Items.Add(new Kepessegek(id, nev, leiras, harcos_id));
             Kepesseglista_update();
         }
 
@@ -285,7 +283,7 @@ namespace HarcsosokAppBne
             sql.CommandText = " UPDATE `kepessegek` SET  `leiras`= " + textBox_kepeseg_leiras_kiir.Text + 
                 "WHERE `id = " + ((Kepessegek)listBox_kepesseg.SelectedItem).Id; 
 
-          // sql.CommandText "UPDATE `kepessegek` SET `leiras`= " + textBox_kepeseg_leiras_kiir.Text +
+         // sql.CommandText "UPDATE `kepessegek` SET `leiras`= " + textBox_kepeseg_leiras_kiir.Text +
           //    "WHERE id = " + ((Kepessegek)listBox_kepesseg.SelectedItem).Id;
           //   "`id`=[value-1]," +
           //   "`nev`=[value-2]," +
