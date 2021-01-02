@@ -97,7 +97,7 @@ namespace HarcsosokAppBne
 
         private void Harcoslista_update()
         {
-
+            listBox_harcos.SelectedIndex = -1;
             listBox_harcos.Items.Clear();
             sql.CommandText = "SELECT `id`,`nev`,`letrehozas` FROM `harcosok` WHERE 1";
 
@@ -119,9 +119,9 @@ namespace HarcsosokAppBne
 
         private void Kepesseglista_update()
         {
-
-           listBox_kepesseg.Items.Clear();
-           sql.CommandText = "SELECT `id`, `nev`, `leiras`, `harcos_id` FROM `kepessegek`";
+            listBox_kepesseg.SelectedIndex = -1;
+            listBox_kepesseg.Items.Clear();
+           sql.CommandText = "SELECT `id`, `nev`, `leiras`, `harcos_id` FROM `kepessegek` WHERE 1";
 
             using (MySqlDataReader dr = sql.ExecuteReader())
             {
@@ -196,7 +196,6 @@ namespace HarcsosokAppBne
                 return;
             }
             
-            int id = ((Harcosok)comboBox_user.SelectedItem).Id;
             string nev = textBox_kepesseg_nev_add.Text.Trim();
             string leiras = textBox_kepesseg_leiras_add.Text.Trim();
            int harcos_id = ((Harcosok)comboBox_user.SelectedItem).Id;
