@@ -28,12 +28,12 @@ namespace HarcsosokAppBne
 
         public override string ToString()
         {
-            return String.Format("{0} ", nev);
+           return String.Format("{0} ", nev);
         }
 
-        public void kepesseg_kiir() {
-            String.Format("{0} {1} ", nev, leiras);
-        }
+        //public void kepesseg_kiir() {
+        //    String.Format("{0} {1} ", nev, leiras);
+        //}
        
     }
 }

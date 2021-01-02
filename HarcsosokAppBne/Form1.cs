@@ -59,6 +59,7 @@ namespace HarcsosokAppBne
                 sql.CommandText = "INSERT INTO `harcosok`(`id`, `nev`)" +
                     " VALUES" +
                     " (NULL,' " + textBox_nev.Text.Trim() + "');";
+              //  sql.ExecuteNonQuery();
                 try
                 {
                     if (sql.ExecuteNonQuery() == 1)
@@ -73,7 +74,8 @@ namespace HarcsosokAppBne
                     return;
                 }
 
-
+                Hasznalolista_update();
+                Harcoslista_update();
             }
         }
 
@@ -135,7 +137,7 @@ namespace HarcsosokAppBne
                     listBox_kepesseg.Items.Add(new Kepessegek(kepesseg_id, kepesseg_nev, kepesseg_leiras, harcos_id));
                 }
             }
-
+            //listBox_kepesseg.Text = ((Kepessegek)listBox_kepesseg.SelectedItem).Nev;
         }
 
         private void label_nev_Click(object sender, EventArgs e) // véletlenül nyomtam meg de nem törlöm,
@@ -171,9 +173,10 @@ namespace HarcsosokAppBne
             }
 
            Harcosok kival = (Harcosok)comboBox_user.SelectedItem;
-           //textBox_nev.Text = kival.Nev;
-          // int harcos_id = kival.Id;
-           numericUpDown_harcosid.Value = ((Harcosok)comboBox_user.SelectedItem).Id;
+           
+            //textBox_nev.Text = kival.Nev;
+            // int harcos_id = kival.Id;
+            numericUpDown_harcosid.Value = ((Harcosok)comboBox_user.SelectedItem).Id;
 
         }
 
@@ -199,15 +202,14 @@ namespace HarcsosokAppBne
             string nev = textBox_kepesseg_nev_add.Text.Trim();
             string leiras = textBox_kepesseg_leiras_add.Text.Trim();
            int harcos_id = ((Harcosok)comboBox_user.SelectedItem).Id;
-        
 
-            sql.CommandText = "INSERT INTO `kepessegek`(`id`, `nev`, `leiras`,`harcos_id`)" +
-              " VALUES" +
-              " (NULL, " + nev + "," +leiras + " ," + " , " + harcos_id + "); ";
-           // sql.ExecuteNonQuery();
+            sql.CommandText = "INSERT INTO `kepessegek`(`id`, `nev`, `leiras`, `harcos_id`) VALUES (NULL, '" + textBox_kepesseg_nev_add.Text.Trim() +"', '" +
+                textBox_kepesseg_leiras_add.Text.Trim() + "', '" +
+                harcos_id +"');";
+                 //  " (NULL, '" +textBox_kepesseg_nev_add.Text.Trim()+"','"+textBox_kepesseg_leiras_add.Text.Trim()+"','"+harcos_id+"');";
 
-            try
-                {
+                       try
+            {
                     if (sql.ExecuteNonQuery() == 1)
                     {
                         textBox_nev.Text = "";
@@ -220,7 +222,7 @@ namespace HarcsosokAppBne
                     return;
                 }
 
-          //  listBox_kepesseg.Items.Add(new Kepessegek(id, nev, leiras, harcos_id));
+            
             Kepesseglista_update();
         }
 
@@ -231,12 +233,13 @@ namespace HarcsosokAppBne
                 MessageBox.Show("Nincs kiválasztva harcos!");
                 return;
             }
-           // listBox_kepesseg.Items.Add(new Kepessegek(nev));
-           // Harcosok kivalaszt = (Harcosok)listBox_harcos.SelectedItem;
-            //listBox_kepesseg.Text = ((Kepessegek)listBox_kepesseg.SelectedItem).Nev;
-            //textBox_nev.Text = kivalaszt.Nev;
+           // textBox_kepeseg_leiras_kiir.Text = ((Kepessegek)listBox_harcosok.SelectedItem).Nev;
+            //  Harcosok kivalaszt = (Harcosok)listBox_harcos.SelectedItem;
+            //listBox_kepesseg.Text = kivalaszt.Nev; 
+            // listBox_kepesseg.Text = kivalaszt.Nev;
+
             //int harcos_id = kivalaszt.Id;
-            Kepesseglista_update();
+            // Kepesseglista_update();
         }
 
         private void listBox_kepesseg_SelectedIndexChanged(object sender, EventArgs e)
@@ -280,15 +283,8 @@ namespace HarcsosokAppBne
                 return;
             }
 
-            sql.CommandText = " UPDATE `kepessegek` SET  `leiras`= " + textBox_kepeseg_leiras_kiir.Text + 
-                "WHERE `id = " + ((Kepessegek)listBox_kepesseg.SelectedItem).Id; 
-
-         // sql.CommandText "UPDATE `kepessegek` SET `leiras`= " + textBox_kepeseg_leiras_kiir.Text +
-          //    "WHERE id = " + ((Kepessegek)listBox_kepesseg.SelectedItem).Id;
-          //   "`id`=[value-1]," +
-          //   "`nev`=[value-2]," +
-
-            //     "`harcos_id`=[value-4] WHERE 1";
+            sql.CommandText = "UPDATE `kepessegek` SET  `leiras`= " + textBox_kepeseg_leiras_kiir.Text +
+                "WHERE id = " + ((Kepessegek)listBox_kepesseg.SelectedItem).Id;       
 
             if (sql.ExecuteNonQuery() == 1)
             {
