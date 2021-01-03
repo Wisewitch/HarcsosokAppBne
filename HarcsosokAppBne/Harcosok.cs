@@ -8,26 +8,26 @@ namespace HarcsosokAppBne
 {
     class Harcosok
     {
-        int id;
+        int harcos_id;
         string nev;
         DateTime letrehozas;
 
-        public Harcosok(int id, string nev, DateTime letrehozas)
+        public Harcosok(int harcos_id, string nev, DateTime letrehozas)
         {
-            this.id = id;
+            this.harcos_id = harcos_id;
             this.nev = nev;
             this.letrehozas = letrehozas;
         }
 
 
-        public int Id { get => id; set => id = value; }
+        public int Harcos_Id { get => harcos_id; set => harcos_id = value; }
         public string Nev { get => nev; set => nev = value; }
         public DateTime Letrehozas { get => letrehozas; set => letrehozas = value; }
 
 
         public override string ToString()
         {
-            return String.Format("{0} - {1} ({2})", id, nev, letrehozas);
+            return String.Format("{0} - {1} ({2})", harcos_id, nev, letrehozas);
         }
     }
 }

@@ -89,10 +89,10 @@ namespace HarcsosokAppBne
             {
                 while (dr.Read())
                 {
-                    int id = dr.GetInt32("id");
+                    int harcos_id = dr.GetInt32("id");
                     string nev = dr.GetString("nev");
                     DateTime letrehozas = dr.GetDateTime("letrehozas");
-                    comboBox_user.Items.Add(new Harcosok(id, nev, letrehozas));
+                    comboBox_user.Items.Add(new Harcosok(harcos_id, nev, letrehozas));
                 }
             }          
         }
@@ -107,11 +107,11 @@ namespace HarcsosokAppBne
             {
                 while (dr.Read())
                 {
-                    int id = dr.GetInt32("id");
+                    int harcos_id = dr.GetInt32("id");
                     string nev = dr.GetString("nev");
                     DateTime letrehozas = dr.GetDateTime("letrehozas");
 
-                    listBox_harcos.Items.Add(new Harcosok(id, nev, letrehozas));
+                    listBox_harcos.Items.Add(new Harcosok(harcos_id, nev, letrehozas));
 
                 }
 
@@ -119,11 +119,14 @@ namespace HarcsosokAppBne
 
         }
 
+       
+
         private void Kepesseglista_update()
         {
             listBox_kepesseg.SelectedIndex = -1;
             listBox_kepesseg.Items.Clear();
-           sql.CommandText = "SELECT `id`, `nev`, `leiras`, `harcos_id` FROM `kepessegek` WHERE 1";
+            //int Harcos_Id = ((Harcosok)comboBox_user.SelectedItem).Harcos_Id;
+            sql.CommandText = "SELECT k.id, k.nev, k.leiras,k.harcos_id FROM kepessegek k JOIN harcosok h ON h.id = k.harcos_id where h.id = k.harcos_id";
 
             using (MySqlDataReader dr = sql.ExecuteReader())
             {
@@ -132,12 +135,12 @@ namespace HarcsosokAppBne
                     int kepesseg_id = dr.GetInt32("id");
                     string kepesseg_nev = dr.GetString("nev");
                     string kepesseg_leiras = dr.GetString("leiras");
-                    int harcos_id = dr.GetInt32("harcos_id");
+                    int harcosok_id = dr.GetInt32("harcos_id");
 
-                    listBox_kepesseg.Items.Add(new Kepessegek(kepesseg_id, kepesseg_nev, kepesseg_leiras, harcos_id));
+                    listBox_kepesseg.Items.Add(new Kepessegek(kepesseg_id, kepesseg_nev, kepesseg_leiras, harcosok_id));
                 }
             }
-            //listBox_kepesseg.Text = ((Kepessegek)listBox_kepesseg.SelectedItem).Nev;
+             
         }
 
         private void label_nev_Click(object sender, EventArgs e) // véletlenül nyomtam meg de nem törlöm,
@@ -176,7 +179,7 @@ namespace HarcsosokAppBne
            
             //textBox_nev.Text = kival.Nev;
             // int harcos_id = kival.Id;
-            numericUpDown_harcosid.Value = ((Harcosok)comboBox_user.SelectedItem).Id;
+            numericUpDown_harcosid.Value = ((Harcosok)comboBox_user.SelectedItem).Harcos_Id;
 
         }
 
@@ -201,7 +204,7 @@ namespace HarcsosokAppBne
             
             string nev = textBox_kepesseg_nev_add.Text.Trim();
             string leiras = textBox_kepesseg_leiras_add.Text.Trim();
-           int harcos_id = ((Harcosok)comboBox_user.SelectedItem).Id;
+           int harcos_id = ((Harcosok)comboBox_user.SelectedItem).Harcos_Id;
 
             sql.CommandText = "INSERT INTO `kepessegek`(`id`, `nev`, `leiras`, `harcos_id`) VALUES (NULL, '" + textBox_kepesseg_nev_add.Text.Trim() +"', '" +
                 textBox_kepesseg_leiras_add.Text.Trim() + "', '" +
@@ -222,7 +225,7 @@ namespace HarcsosokAppBne
                     return;
                 }
 
-            
+
             Kepesseglista_update();
         }
 
@@ -233,13 +236,10 @@ namespace HarcsosokAppBne
                 MessageBox.Show("Nincs kiválasztva harcos!");
                 return;
             }
-           // textBox_kepeseg_leiras_kiir.Text = ((Kepessegek)listBox_harcosok.SelectedItem).Nev;
-            //  Harcosok kivalaszt = (Harcosok)listBox_harcos.SelectedItem;
-            //listBox_kepesseg.Text = kivalaszt.Nev; 
-            // listBox_kepesseg.Text = kivalaszt.Nev;
-
-            //int harcos_id = kivalaszt.Id;
-            // Kepesseglista_update();
+            Harcosok hkivalaszt = (Harcosok)listBox_harcos.SelectedItem;
+            int harcos_id = hkivalaszt.Harcos_Id;
+            listBox_kepesseg.Text = hkivalaszt.Nev;
+            Kepesseglista_update();
         }
 
         private void listBox_kepesseg_SelectedIndexChanged(object sender, EventArgs e)
@@ -249,9 +249,9 @@ namespace HarcsosokAppBne
                 MessageBox.Show("Nincs kiválasztva képesség!");
                 return;
             }
+          //  textBox_kepeseg_leiras_kiir.Text = ((Kepessegek)listBox_kepesseg.SelectedItem).Leiras;
+             Kepessegek kivalaszt = (Kepessegek)listBox_kepesseg.SelectedItem;
             textBox_kepeseg_leiras_kiir.Text = ((Kepessegek)listBox_kepesseg.SelectedItem).Leiras;
-            // Kepessegek kivalaszt = ((Kepessegek)listBox_kepesseg.SelectedItem;
-            //textBox_kepeseg_leiras_kiir = Kepessegek.kepesseg_kiir();
 
         }
 
@@ -283,7 +283,8 @@ namespace HarcsosokAppBne
                 return;
             }
 
-            sql.CommandText = "UPDATE `kepessegek` SET  `leiras`= " + textBox_kepeseg_leiras_kiir.Text +
+            sql.CommandText = "UPDATE `kepessegek` " +
+                "SET `leiras`= "+textBox_kepeseg_leiras_kiir.Text+"', " +
                 "WHERE id = " + ((Kepessegek)listBox_kepesseg.SelectedItem).Id;       
 
             if (sql.ExecuteNonQuery() == 1)
