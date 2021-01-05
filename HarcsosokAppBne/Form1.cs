@@ -123,10 +123,13 @@ namespace HarcsosokAppBne
 
         private void Kepesseglista_update()
         {
-            listBox_kepesseg.SelectedIndex = -1;
             listBox_kepesseg.Items.Clear();
-            //int Harcos_Id = ((Harcosok)comboBox_user.SelectedItem).Harcos_Id;
-            sql.CommandText = "SELECT k.id, k.nev, k.leiras,k.harcos_id FROM kepessegek k JOIN harcosok h ON h.id = k.harcos_id where h.id = k.harcos_id";
+            textBox_kepeseg_leiras_kiir.Text = "";
+
+            int harcos_id = ((Harcosok)listBox_harcos.SelectedItem).Harcos_Id;
+
+            sql.CommandText = "SELECT id, nev, leiras, harcos_id FROM kepessegek WHERE harcos_id = @harcos_id"; ;
+            sql.Parameters.AddWithValue("@harcos_id", harcos_id);
 
             using (MySqlDataReader dr = sql.ExecuteReader())
             {
@@ -140,7 +143,7 @@ namespace HarcsosokAppBne
                     listBox_kepesseg.Items.Add(new Kepessegek(kepesseg_id, kepesseg_nev, kepesseg_leiras, harcosok_id));
                 }
             }
-             
+            sql.Parameters.Clear();
         }
 
         private void label_nev_Click(object sender, EventArgs e) // véletlenül nyomtam meg de nem törlöm,
@@ -156,14 +159,15 @@ namespace HarcsosokAppBne
                 MessageBox.Show("A Név mező kitöltése kötelező!");
                 return false;
             }
-            sql.CommandText = "SELECT COUNT(*) FROM `harcosok` WHERE nev =" + textBox_nev.Text.Trim();
-            //long ellenorzesDb = (long)sql.ExecuteScalar();
-            //if (ellenorzesDb > 0)
-            //{
-            //    MessageBox.Show("Ilyen névvel már szerepelt harcos!");
-            //    return false;
-            //}
-           
+            sql.CommandText = "SELECT COUNT(*) FROM `harcosok` WHERE nev = '" + textBox_nev.Text.Trim() + "'";
+
+            long ellenorzesDb = (long)sql.ExecuteScalar();
+            if (ellenorzesDb > 0)
+            {
+                MessageBox.Show("Ilyen névvel már szerepelt harcos!");
+                return false;
+            }
+
             return true;
         }
 
@@ -175,11 +179,8 @@ namespace HarcsosokAppBne
                 return;
             }
 
-           Harcosok kival = (Harcosok)comboBox_user.SelectedItem;
-           
-            //textBox_nev.Text = kival.Nev;
-            // int harcos_id = kival.Id;
-            numericUpDown_harcosid.Value = ((Harcosok)comboBox_user.SelectedItem).Harcos_Id;
+           Harcosok kival = (Harcosok)comboBox_user.SelectedItem;        
+           numericUpDown_harcosid.Value = ((Harcosok)comboBox_user.SelectedItem).Harcos_Id;
 
         }
 
@@ -209,8 +210,7 @@ namespace HarcsosokAppBne
             sql.CommandText = "INSERT INTO `kepessegek`(`id`, `nev`, `leiras`, `harcos_id`) VALUES (NULL, '" + textBox_kepesseg_nev_add.Text.Trim() +"', '" +
                 textBox_kepesseg_leiras_add.Text.Trim() + "', '" +
                 harcos_id +"');";
-                 //  " (NULL, '" +textBox_kepesseg_nev_add.Text.Trim()+"','"+textBox_kepesseg_leiras_add.Text.Trim()+"','"+harcos_id+"');";
-
+             
                        try
             {
                     if (sql.ExecuteNonQuery() == 1)
@@ -227,6 +227,7 @@ namespace HarcsosokAppBne
 
 
             Kepesseglista_update();
+            textBox_kepesseg_nev_add.Text = "";
         }
 
         private void listBox_harcos_SelectedIndexChanged(object sender, EventArgs e)
@@ -249,8 +250,7 @@ namespace HarcsosokAppBne
                 MessageBox.Show("Nincs kiválasztva képesség!");
                 return;
             }
-          //  textBox_kepeseg_leiras_kiir.Text = ((Kepessegek)listBox_kepesseg.SelectedItem).Leiras;
-             Kepessegek kivalaszt = (Kepessegek)listBox_kepesseg.SelectedItem;
+
             textBox_kepeseg_leiras_kiir.Text = ((Kepessegek)listBox_kepesseg.SelectedItem).Leiras;
 
         }
@@ -279,23 +279,28 @@ namespace HarcsosokAppBne
         {
             if (listBox_kepesseg.SelectedIndex < 0)
             {
-                MessageBox.Show("Nincs kiválasztva képesség");
+                MessageBox.Show("Nincs kiválasztva képességAAAAAA");
                 return;
             }
 
-            sql.CommandText = "UPDATE `kepessegek` " +
-                "SET `leiras`= "+textBox_kepeseg_leiras_kiir.Text+"', " +
-                "WHERE id = " + ((Kepessegek)listBox_kepesseg.SelectedItem).Id;       
-
-            if (sql.ExecuteNonQuery() == 1)
+            try
             {
+                sql.CommandText = "UPDATE kepessegek SET leiras = @leiras WHERE id = @id";
+
+                sql.Parameters.AddWithValue("@leiras", textBox_kepeseg_leiras_kiir.Text);
+                sql.Parameters.AddWithValue("@id", ((Kepessegek)listBox_kepesseg.SelectedItem).Id);
+                sql.ExecuteNonQuery();
+
                 MessageBox.Show("Sikerült módosítani a képességet!");
             }
-            else
+            catch (MySqlException ex)
             {
-                MessageBox.Show("Sikertelen volt a módosítás!");
-                return;
+                MessageBox.Show(ex.Message + "\nSikertelen volt a módosítás!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
-        }
+
+            sql.Parameters.Clear();
+            Kepesseglista_update();
+
+          }
     }
 }
